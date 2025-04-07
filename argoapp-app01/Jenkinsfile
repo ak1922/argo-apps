@@ -1,0 +1,33 @@
+pipeline{
+    agent {
+        label 'c0'
+    }
+    options {
+         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '6', numToKeepStr: '10')
+    }
+    environment{
+        docker_cred = credentials('dockerhub_cred')
+    }
+    stages {
+        stage('Git checkout') {
+            steps {
+                echo '*** checkout code **'
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/ak1922/argo-apps.git']])
+            }
+        }
+        stage('Listing files') {
+            steps {
+                dir('argoapp-app01') {
+                echo '*** Listing files ***'
+                sh 'ls -ltr'
+                }
+            }
+        }
+        stage('Docker build') {
+            steps {
+                echo '*** Building Docker file ***'
+                sh 'docker build -t akwasi14/argoapp-app01:${env.BUILD_NUMBER}'
+            }
+        }
+    }
+}

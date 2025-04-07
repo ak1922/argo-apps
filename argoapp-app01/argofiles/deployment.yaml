@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  argoappapp01
+  namespace: sandbox
+  labels:
+    app:  argoappapp01
+spec:
+  selector:
+    matchLabels:
+      app: argoappapp01
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  argoappapp01
+    spec:
+      containers:
+      - name:  argoappapp01-container
+        image:  akwasi14/argoapp-app01:latest
+        ports:
+        - containerPort:  80
+          name:  argoappapp01

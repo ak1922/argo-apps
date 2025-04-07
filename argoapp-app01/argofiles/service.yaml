@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: argoappapp01-svc
+  namespace: sandbox
+spec:
+  selector:
+    app: argoappapp01
+  type: NodePort
+  ports:
+  - name: argoappapp01-port
+    protocol: TCP
+    port: 80
+    targetPort: 80 
+    nodePort: 32006

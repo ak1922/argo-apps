@@ -42,5 +42,14 @@ pipeline{
                 sh 'docker push ${DOCKER_IMAGE}:latest'
             }
         }
+        stage('Argocd stage') {
+            steps {
+                dir('argoapp-app01') {
+                    echo '*** Creating app ***'
+                    sh 'kubectl apply -f argoapp-app01.yaml'
+                    sh 'kubectl get all'
+                }
+            }
+        }
     }
 }

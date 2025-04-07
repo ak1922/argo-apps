@@ -10,7 +10,7 @@ spec:
     server: https://kmaster:6443
   source:
     path: argoapp-app01/argofiles
-    repoURL: "https://github.com/ak1922/argo-apps.git"
+    repoURL: 'https://github.com/ak1922/argo-apps.git'
     targetRevision: HEAD
   syncPolicy:
     automated:

@@ -1,12 +1,14 @@
 pipeline{
     agent {
-        label 'c0'
+        label 'c1'
     }
     options {
          buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '6', numToKeepStr: '10')
     }
     environment{
-        docker_cred = credentials('dockerhub_cred')
+        dockerhub_cred = credentials('dockerhub_cred')
+        DOCKER_IMAGE = "akwasi14/argoapp-app01"
+        DOCKER_TAG = "$BUILD_NUMBER"
     }
     stages {
         stage('Git checkout') {
@@ -25,8 +27,19 @@ pipeline{
         }
         stage('Docker build') {
             steps {
-                echo '*** Building Docker file ***'
-                sh "docker build -t akwasi14/argoapp-app01:${env.BUILD_NUMBER} ."
+                dir('argoapp-app01') {
+                    echo '*** Building docker file ***'
+                    sh 'docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .'
+                }
+            }
+        }
+        stage('Docker push') {
+            steps {
+                echo '*** Docker tag and push image ***'
+                sh 'echo $dockerhub_cred_PSW | docker login -u $dockerhub_cred_USR --password-stdin'
+                sh 'docker push ${DOCKER_IMAGE}:${DOCKER_TAG}'
+                sh 'docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest'
+                sh 'docker push ${DOCKER_IMAGE}:latest'
             }
         }
     }
